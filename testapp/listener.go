@@ -7,10 +7,7 @@ import (
 )
 
 func main() {
-	poller, err := zkbq.NewZKBPoller()
-	if err != nil {
-		log.Fatalf("Error creating ZMQ RedisQ Poller: %v\n", err)
-	}
+	poller := zkbq.NewZKBPoller()
 
 	for {
 		select {

@@ -22,17 +22,14 @@ type ZKBPoller struct {
 }
 
 // NewZKBPoller creates a Zkillboard Poller and sends killmails over ch
-func NewZKBPoller() (zpoll *ZKBPoller, err error) {
+func NewZKBPoller() (zpoll *ZKBPoller) {
 	// Safety check to prevent NPE's
-	if zpoll == nil {
-		zpoll = &ZKBPoller{}
+	zpoll = &ZKBPoller{
+		client: &http.Client{Timeout: time.Second * 11},
+		wg:     &sync.WaitGroup{},
+		Kill:   make(KillChan),
+		Error:  make(chan error),
 	}
-
-	// ZKB RedisQ has a timeout of 10 seconds before it returns payload: null
-	zpoll.client = &http.Client{Timeout: time.Second * 11}
-	zpoll.wg = &sync.WaitGroup{}
-	zpoll.Kill = make(KillChan)
-	zpoll.Error = make(chan error)
 
 	zpoll.wg.Add(1)
 	go zpoll.work()
